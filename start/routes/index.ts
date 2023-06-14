@@ -6,5 +6,5 @@ Route.get('/', async () => {
 })
 
 Route.get('/user-register', async ({ view }) => {
-  return view.render('home')
+  return view.render('register')
 })
