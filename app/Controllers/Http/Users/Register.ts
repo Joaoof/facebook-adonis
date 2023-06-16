@@ -11,13 +11,9 @@ export default class UserRegisterController {
 
     await user.save()
 
-    const key = faker.datatype.uuid() + String(new Date().getTime())
+    const key = faker.datatype.uuid() + new Date().getTime()
 
-    const keyData: Partial<UserKey> = {
-      id: 0,
-    }
-
-    user.related('keys').create(keyData)
+    user.related('keys').create({ key })
 
     const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
 
@@ -29,7 +25,12 @@ export default class UserRegisterController {
     })
   }
 
-  public async show({}: HttpContextContract) {}
+  public async show({ params }: HttpContextContract) {
+    const userKey = await UserKey.findByOrFail('key', params.key)
+    const user = await userKey.related('user').query().firstOrFail()
+
+    return user
+  }
 
   public async update({}: HttpContextContract) {}
 }
