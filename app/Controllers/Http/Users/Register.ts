@@ -17,7 +17,7 @@ export default class UserRegisterController {
 
     const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
 
-    Mail.send((message) => {
+    await Mail.send((message) => {
       message.to(email)
       message.from('contato@facebook.com', 'Facebook')
       message.subject('Criação de conta')
