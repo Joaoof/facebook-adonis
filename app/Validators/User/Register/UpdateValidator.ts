@@ -5,9 +5,9 @@ export default class UpdateValidator {
   constructor(private ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    email: schema.string({ trim: true }, [rules.exists({ table: 'user_keys', column: 'key' })]),
+    key: schema.string({ trim: true }, [rules.exists({ table: 'user_keys', column: 'key' })]),
     name: schema.string({ trim: true }),
-    redirectUrl: schema.string({ trim: true }, [rules.confirmed('passwordConfirmation')]),
+    password: schema.string({ trim: true }, [rules.confirmed('passwordConfirmation')]),
   })
 
   public cacheKey = this.ctx.routeKey

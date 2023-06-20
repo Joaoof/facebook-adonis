@@ -45,7 +45,7 @@ export default class UserRegisterController {
 
     await user.save()
 
-    await userKey.delete()git ad
+    await userKey.delete()
 
     return response.ok({ message: 'OK' })
   }
