@@ -7,22 +7,28 @@ import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class UserRegisterController {
   public async store({ request }: HttpContextContract) {
-    const { email, redirectUrl } = await request.validate(StoreValidator)
-    const user = await User.create({ email })
+    await Database.transaction(async (trx) => {
+      const { email, redirectUrl } = await request.validate(StoreValidator)
+      const user = new User()
 
-    await user.save()
+      user.useTransaction(trx)
 
-    const key = faker.datatype.uuid() + new Date().getTime()
+      user.email = email
 
-    user.related('keys').create({ key })
+      await user.save()
 
-    const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
+      const key = faker.datatype.uuid() + new Date().getTime()
 
-    await Mail.send((message) => {
-      message.to(email)
-      message.from('contato@facebook.com', 'Facebook')
-      message.subject('Criação de conta')
-      message.htmlView('emails/register', { link })
+      user.related('keys').create({ key })
+
+      const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
+
+      await Mail.send((message) => {
+        message.to(email)
+        message.from('contato@facebook.com', 'Facebook')
+        message.subject('Criação de conta')
+        message.htmlView('emails/register', { link })
+      })
     })
   }
 
