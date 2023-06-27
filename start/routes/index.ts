@@ -9,3 +9,7 @@ Route.get('/', async () => {
 Route.get('/user-register', async ({ view }) => {
   return view.render('emails/register')
 })
+
+Route.get('/user-password', async ({ view }) => {
+  return view.render('emails/password')
+})

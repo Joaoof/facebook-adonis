@@ -21,8 +21,8 @@ export default class ForgotPasswordsController {
     await Mail.send((message) => {
       message.to(email)
       message.from('contato@facebook.com', 'Facebook')
-      message.subject('criação de conta')
-      message.htmlView('emails/register', { link })
+      message.subject('recuperação de senha')
+      message.htmlView('emails/password', { link })
     })
   }
 
