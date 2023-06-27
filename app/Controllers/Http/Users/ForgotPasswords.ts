@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { StoreValidator } from 'App/Validators/User/ForgotPassword'
+import { StoreValidator, UpdateValidator } from 'App/Validators/User/ForgotPassword'
 import { User, UserKey } from 'App/Models'
 import { faker } from '@faker-js/faker'
 import Mail from '@ioc:Adonis/Addons/Mail'
@@ -33,5 +33,17 @@ export default class ForgotPasswordsController {
     return user
   }
 
-  public async update({}: HttpContextContract) {}
+  public async update({ request, response }: HttpContextContract) {
+    const { key, password } = await request.validate(UpdateValidator)
+    const userKey = await UserKey.findByOrFail('key', key)
+    const user = await userKey.related('user').query().firstOrFail()
+
+    user.merge({ password })
+
+    await user.save() // salvar usúario
+
+    await userKey.delete() // deletar a chave
+
+    return response.ok({ message: 'ok' })
+  }
 }
