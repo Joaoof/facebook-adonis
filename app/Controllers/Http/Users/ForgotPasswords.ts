@@ -3,26 +3,33 @@ import { StoreValidator, UpdateValidator } from 'App/Validators/User/ForgotPassw
 import { User, UserKey } from 'App/Models'
 import { faker } from '@faker-js/faker'
 import Mail from '@ioc:Adonis/Addons/Mail'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class ForgotPasswordsController {
   public async store({ request }: HttpContextContract) {
-    const { email, redirectUrl } = await request.validate(StoreValidator)
+    await Database.transaction(async (trx) => {
+      const { email, redirectUrl } = await request.validate(StoreValidator)
 
-    const user = await User.create({ email })
+      const user = new User()
 
-    await user.save()
+      user.useTransaction(trx)
 
-    const key = faker.datatype.uuid() + new Date().getTime()
+      user.email = email
 
-    user.related('keys').create({ key })
+      await user.save()
 
-    const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
+      const key = faker.datatype.uuid() + new Date().getTime()
 
-    await Mail.send((message) => {
-      message.to(email)
-      message.from('contato@facebook.com', 'Facebook')
-      message.subject('recuperação de senha')
-      message.htmlView('emails/password', { link })
+      user.related('keys').create({ key })
+
+      const link = `${redirectUrl.replace(/\/$/, '')}/${key}`
+
+      await Mail.send((message) => {
+        message.to(email)
+        message.from('contato@facebook.com', 'Facebook')
+        message.subject('recuperação de senha')
+        message.htmlView('emails/password', { link })
+      })
     })
   }
 
