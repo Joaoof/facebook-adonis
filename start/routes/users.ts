@@ -7,3 +7,6 @@ Route.put('/users/register', 'Users/Register.update')
 Route.post('/users/password', 'Users/ForgotPasswords.store')
 Route.get('/users/password/:key', 'Users/ForgotPasswords.show')
 Route.put('/users/password', 'Users/ForgotPasswords.update')
+
+Route.get('/users', 'Users/Main.show').middleware('auth')
+Route.put('/users', 'Users/Main.update').middleware('auth')
