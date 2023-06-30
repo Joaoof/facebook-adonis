@@ -8,7 +8,7 @@ export default class UpdateValidator {
     name: schema.string({ trim: true }),
     username: schema.string({ trim: true }),
     email: schema.string({ trim: true }, [rules.email()]),
-    password: schema.string({ trim: true }, [rules.confirmed('passwordConfirmation')]),
+    password: schema.string.optional({ trim: true }, [rules.confirmed('passwordConfirmation')]),
   })
 
   public cacheKey = this.ctx.routeKey
