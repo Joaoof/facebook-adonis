@@ -54,7 +54,7 @@ export default class User extends BaseModel {
 
   @hasOne(() => File, {
     foreignKey: 'ownerId',
-    onQuery: (query) => query.where({ FileCategory: 'avatar' }),
+    onQuery: (query) => query.where({ fileCategory: 'avatar' }),
   })
   public avatar: HasOne<typeof File>
 }
